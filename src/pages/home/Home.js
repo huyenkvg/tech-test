@@ -6,6 +6,8 @@ import { getListRepos } from "../../apis/Oct";
 import SearchBar from "../../components/search/SearchBar";
 import { Option } from "antd/es/mentions";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setDanhSachRepo } from "../../store/features/Repo/repoSlice";
 
 
 
@@ -42,6 +44,8 @@ const getColor = (language) => {
 export default function Home(props) {
   const [repoData, setRepoData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const list_repositories = useSelector(state => state.ds_repo).list_repo;
   const navigate = useNavigate();
   const [filter, setFilter] = useState({ search: '', page: 1, per_page: 100, type: 'all' });
   const user = localStorage.getItem('user') ? localStorage.getItem('user') : 'huyenkvg';
@@ -103,33 +107,32 @@ export default function Home(props) {
       dataIndex: "pushed_at",
       key: "pushed_at",
     },
-    // {
-    //   title: "Size",
-    //   dataIndex: "size",
-    //   key: "size",
-    // },
+    {
+      title: "Size",
+      dataIndex: "size",
+      key: "size",
+    },
   ];
 
   useEffect(() => {
     setLoading(true);
     getListRepos(user, filter).then((res) => {
       setRepoData(res.data);
+      dispatch(setDanhSachRepo(res.data));
     }).catch((err) => {
       showMessage('error', 'Something went wrong');
     }).finally(() => {
       setLoading(false);
     })
-  }, [])
+  }, [filter.type])
 
   useEffect(() => {
-    setLoading(true);
-    getListRepos(user, filter).then((res) => {
-      setRepoData(res.data);
-    }).catch((err) => {
-      showMessage('error', 'Something went wrong');
-    }).finally(() => {
-      setLoading(false);
-    })
+
+    setRepoData(list_repositories.filter((item) => {
+      return (item.name?.toLowerCase().includes(filter.search.toLowerCase()) || item.description?.toLowerCase().includes(filter.search.toLowerCase())  || item.language?.toLowerCase().includes(filter.search.toLowerCase()));
+    }));
+
+    
   }, [filter])
   return (
     <MainLayout >

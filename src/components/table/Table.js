@@ -73,7 +73,7 @@ const data = [
 
 export default  function TableX ({columns, data, ...props}){
   return (
-    <Table columns={columns} dataSource={data} {...props} />
+    <Table columns={columns} dataSource={data} {...props} rowKey={data.key} />
   );
 
 } 
