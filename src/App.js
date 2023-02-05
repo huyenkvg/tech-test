@@ -1,25 +1,47 @@
-import logo from './logo.svg';
+
+import { Col, Row } from 'antd';
+import { useEffect } from 'react';
 import './App.css';
+import TableX from './components/table/Table';
+import { authen, getListRepos, get_repos } from './apis/Oct';
+import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import MainLayout from './layouts/MainLayout';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './pages/home/Home';
+import Repo from './pages/repo/Repo';
+import LoginForm from './pages/login/LoginForm';
+const { Header, Content, Footer } = Layout;
 
-function App() {
+
+
+const App = () => {
+  const user = localStorage.getItem('user') ? localStorage.getItem('user') : {};
+
+  const privateRoutes = [
+  ]
+  const publicRoutes = [
+    { path: '/', element: <Home /> },
+    { path: '/:user/:name', element: <Repo /> },
+    { path: '/login', element: <LoginForm /> },
+  ]
+
+  useEffect(() => {
+
+  }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+    // <MainLayout/>
+    // <Home />
+    <Router >
+      <Routes>
+        {
+          publicRoutes.map((route, index) => (
+            <Route path={route.path} element={route.element} />
+          ))
+        }
+      </Routes>
+    </Router> 
 
+  );
+};
 export default App;
